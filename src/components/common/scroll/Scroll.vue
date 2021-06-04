@@ -13,6 +13,16 @@
 
     export default {
         name: "Scroll",
+      props: {
+        probeType: {
+          type: Number,
+          default: 0
+        },
+        pullUpLoad: {
+          type: Boolean,
+          default: false
+        }
+      },
       data() {
           return {
             scroll: null
@@ -20,7 +30,27 @@
       },
       mounted() {
           // 如果在多个元素标签中（也可以是不同组件中的）用了相同的class，document.querySelector()拿到的元素标签不确定
-          this.scroll = new BScroll(this.$refs.wrapper)
+          this.scroll = new BScroll(this.$refs.wrapper, {
+            click: true,
+            probeType: this.probeType,
+            pullUpLoad: this.pullUpLoad
+          })
+
+        this.scroll.on('scroll', (position) => {
+          this.$emit('scroll', position)
+        })
+
+        this.scroll.on('pullingUp',() => {
+          this.$emit('pullingUp')
+        })
+      },
+      methods: {
+          scrollTo(x, y, time=300) {
+            this.scroll.scrollTo(x, y, time)
+          },
+        finishPullUp() {
+            this.scroll.finishPullUp()
+        }
       }
     }
 </script>
